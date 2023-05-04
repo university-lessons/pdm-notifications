@@ -23,3 +23,5 @@ As notificações locais podem ser enviadas pelo próprio aplicativo ou algum se
 Conforme dito anteriormente, notificações remotas precisam ter um projeto vinculado na plataforma do expo. Para isto, crie uma conta em https://expo.dev/, e em seguida crie um novo projeto, ao abrir este projeto você poderá visualizar e copiar o **ID**, ex: f76084b6-e5c2-4f66-bac8-b0cc25c18c42 (este projeto já foi excluído, então esse ID não vai funcionar, crie o seu para testar).
 
 O ID do projeto deve ser utilizado no método `registerForPushNotificationsAsync`.
+
+Existe uma ferramenta do próprio que pode ajudar você a testar notificações remotas: https://expo.dev/notifications
