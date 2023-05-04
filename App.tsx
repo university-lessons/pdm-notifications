@@ -3,6 +3,8 @@
 import * as Device from "expo-device";
 
 import * as Notifications from "expo-notifications";
+import { Subscription } from "expo-modules-core";
+
 import React, { useState, useEffect, useRef } from "react";
 import { Text, View, Button, Platform } from "react-native";
 
@@ -33,13 +35,14 @@ export default function App() {
    * Estado da aplicação (state)
    */
   const [expoPushToken, setExpoPushToken] = useState("");
-  const [notification, setNotification] = useState(false);
+  const [notification, setNotification] =
+    useState<Notifications.Notification>(null);
 
   /**
    * Referências aos objetos "ouvintes" (listeners)
    */
-  const notificationListener = useRef();
-  const responseListener = useRef();
+  const notificationListener = useRef<Subscription>();
+  const responseListener = useRef<Subscription>();
 
   /**
    * Efeito colateral, lembra do ciclo de vida da aplicação (aula 5)? componentDidMount?
@@ -51,12 +54,13 @@ export default function App() {
       (token) => setExpoPushToken(token) //salvar o token no estado (state)
     );
 
-    //Terceiro passo (avisar a aplicação que chegou uma nova notificação)
+    //Passo 2: avisar a aplicação que chegou uma nova notificação
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification); //armazenar a notificação no estado (state)
       });
-    //Terceiro passo (evento executado quando o usuário clica na notificação)
+
+    //Passo 3: evento executado quando o usuário clica na notificação
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
@@ -69,8 +73,10 @@ export default function App() {
      * de serviços.
      * */
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener);
-      Notifications.removeNotificationSubscription(responseListener);
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
 
@@ -161,7 +167,7 @@ async function sendPushNotification(expoPushToken) {
 }
 
 /**
- * Passo 1: obtenção do token (método pronto)
+ * Passo 1: obtenção do token (método pronto, use-o sempre que precisar)
  */
 async function registerForPushNotificationsAsync() {
   let token;
