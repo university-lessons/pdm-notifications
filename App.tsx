@@ -99,7 +99,7 @@ export default function App() {
         </Text>
         <Text>Body: {notification && notification.request.content.body}</Text>
         <Text>
-          Data:{" "}
+          Data:
           {notification && JSON.stringify(notification.request.content.data)}
         </Text>
       </View>
@@ -111,12 +111,18 @@ export default function App() {
         }}
       />
 
-      <Button
-        title="Press to schedule a notification (Remote)"
-        onPress={async () => {
-          await sendPushNotification(expoPushToken); //Segundo Passo: lançar a notificação (remoto, via API)
-        }}
-      />
+      <View>
+        <Button
+          title="Press to schedule a notification (Remote)"
+          onPress={async () => {
+            await sendPushNotification(expoPushToken); //Segundo Passo: lançar a notificação (remoto, via API)
+          }}
+        />
+        <Text>
+          This notification will not show up if you stay with the app opened! So
+          click and quickly press your home button to put the app in background.
+        </Text>
+      </View>
     </View>
   );
 }
@@ -155,15 +161,17 @@ async function sendPushNotification(expoPushToken) {
   /**
    * Não se preocupe com isso ainda.. vamos aprender tudo sobre APIs na aula sobre REST =)
    */
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Accept-encoding": "gzip, deflate",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(message),
-  });
+  setTimeout(async () => {
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }, 3000);
 }
 
 /**
@@ -183,7 +191,11 @@ async function registerForPushNotificationsAsync() {
       alert("Failed to get push token for push notification!");
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
+    token = (
+      await Notifications.getExpoPushTokenAsync({
+        projectId: "f76084b6-e5c2-4f66-bac8-b0cc25c18c42", // Este ID deve ser obtido do seu projeto expo em https://expo.dev
+      })
+    ).data;
     console.log(token);
   } else {
     alert("Must use physical device for Push Notifications");
